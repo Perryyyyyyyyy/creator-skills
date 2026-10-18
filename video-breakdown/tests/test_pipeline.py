@@ -4,6 +4,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 import video_breakdown as v
@@ -115,6 +116,41 @@ class PipelineTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             v.import_metadata(job, path)
         self.assertEqual(job.data['metadata'], {})
+
+    def test_profile_collection_and_legacy_export_omit_unreliable_account_totals(self):
+        job = v.Job(self.root / 'job')
+        profile = {'user': {'userPageData': {
+            'basicInfo': {'desc': '账号简介'},
+            'interactions': [{'type': 'fans', 'count': '1千+'},
+                             {'type': 'follows', 'count': '888'},
+                             {'type': 'interaction', 'count': '9万+'}]}}}
+        with patch('yt_dlp.YoutubeDL'), patch('yt_dlp.extractor.xiaohongshu.XiaoHongShuIE') as extractor:
+            extractor.return_value._search_json.return_value = profile
+            v.xhs_public_profile(job, 'https://www.xiaohongshu.com/user/profile/example')
+        self.assertEqual(set(job.data['metadata']), {'followers', 'bio'})
+        self.assertEqual(job.data['metadata']['followers']['value'], '1千+')
+        job.data['metadata']['following'] = v.metadata_field('LEGACY_FOLLOWING', 'old')
+        job.data['metadata']['account_likes_and_saves'] = v.metadata_field('LEGACY_ACCOUNT_TOTAL', 'old')
+        v.export(job)
+        report = (job.dir / 'output/拆解报告.md').read_text(encoding='utf-8')
+        self.assertNotIn('LEGACY_FOLLOWING', report)
+        self.assertNotIn('LEGACY_ACCOUNT_TOTAL', report)
+        self.assertIn('1千+', report)
+
+    def test_metadata_import_excludes_account_totals_but_keeps_post_interactions(self):
+        job = v.Job(self.root / 'job')
+        data = dict(source_url='https://www.xiaohongshu.com/explore/example', observed_at=v.now(),
+                    method='browser', fields={
+                        'following': {'value': 888, 'status': 'observed'},
+                        'account_likes_and_saves': {'value': '9万+', 'status': 'observed'},
+                        'likes': {'value': 12, 'status': 'observed'},
+                        'saves': {'value': 34, 'status': 'observed'}})
+        path = self.root / 'metadata.json'
+        v.write_json(path, data)
+        v.import_metadata(job, path)
+        self.assertEqual(set(job.data['metadata']), {'likes', 'saves'})
+        self.assertEqual(job.data['metadata']['likes']['value'], 12)
+        self.assertEqual(set(job.data['evidence'][-1]['fields']), {'likes', 'saves'})
 
 
 if __name__ == '__main__':

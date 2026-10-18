@@ -21,7 +21,7 @@ record.json 至少包含 schema_version、task_id、created_at、updated_at、in
 
 ## 元数据字段
 
-建议字段：platform、note_id、title、body、cover_text、author_name、author_profile_url、bio、verification、account_category、followers、following、account_likes_and_saves、published_at、duration_seconds、aspect_ratio、likes、saves、comments、shares、views。
+建议字段：platform、note_id、title、body、cover_text、author_name、author_profile_url、bio、verification、account_category、followers、published_at、duration_seconds、aspect_ratio、likes、saves、comments、shares、views。
 
 每项字段保存：
 

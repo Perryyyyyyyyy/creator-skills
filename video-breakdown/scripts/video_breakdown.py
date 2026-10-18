@@ -27,9 +27,10 @@ VERSION = '1.0.0'
 TZ = timezone(timedelta(hours=8))
 DIMENSIONS = ['目标人群', '选题与价值', '标题与封面', '开头钩子', '内容结构', '情绪与表达', '视听与节奏', '互动与转化']
 STAGES = ['metadata', 'media', 'transcription', 'visual', 'alignment', 'analysis', 'export']
+EXCLUDED_METADATA_FIELDS = frozenset({'following', 'account_likes_and_saves'})
 LABELS = dict(title='标题', body='笔记正文', author_name='账号名', author_profile_url='账号主页',
               note_id='笔记 ID', likes='点赞', saves='收藏', comments='评论', shares='分享', views='播放量',
-              followers='粉丝量', following='关注', account_likes_and_saves='账号累计获赞与收藏',
+              followers='粉丝量',
               platform='平台', published_at='发布时间', bio='简介', account_category='账号定位')
 STAGE_LABELS = dict(metadata='基础数据', media='视频获取与校验', transcription='音频转写',
                    visual='画面观察', alignment='成片还原', analysis='内容分析', export='导出')
@@ -275,7 +276,7 @@ def xhs_public_profile(job, url):
                         'profile state', 'profile', transform_source=js_to_json)
         profile = initial.get('user', {}).get('userPageData', {})
         basic = profile.get('basicInfo', {})
-        mapping = {'fans': 'followers', 'follows': 'following', 'interaction': 'account_likes_and_saves'}
+        mapping = {'fans': 'followers'}
         fields = {}
         if basic.get('desc') is not None:
             fields['bio'] = metadata_field(basic['desc'], 'page-xhs-profile')
@@ -547,7 +548,8 @@ def apply_review(job, path):
 
 def import_metadata(job, path):
     data = json.loads(Path(path).read_text(encoding='utf-8-sig'))
-    records = data.get('fields', {})
+    records = {key: value for key, value in data.get('fields', {}).items()
+               if key not in EXCLUDED_METADATA_FIELDS}
     source_url = clean_url(data.get('source_url'))
     if job.data['source_url'] and source_url != job.data['source_url']:
         raise ValueError('Metadata source does not match this job')
@@ -609,6 +611,8 @@ def export(job):
             lines.append(f'| {STAGE_LABELS[name]} | {STATUS_LABELS[value["status"]]} | {md(value.get("reason") or value.get("note") or "")} |')
     lines += ['', '## 基础信息', '', '| 字段 | 值 | 口径 | 观察时间 |', '|---|---|---|---|']
     for name, value in meta.items():
+        if name in EXCLUDED_METADATA_FIELDS:
+            continue
         lines.append(f'| {md(LABELS.get(name,name))} | {md(value.get("value"))} | {STATUS_LABELS.get(value.get("status"),value.get("status"))} | {md(value.get("observed_at"))} |')
     if d['media']:
         lines += ['', f'视频时长：{d["media"]["duration_seconds"]:.3f} 秒；画幅：{d["media"]["width"]} × {d["media"]["height"]}。']
