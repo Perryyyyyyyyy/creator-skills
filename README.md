@@ -6,7 +6,7 @@
 
 | 技能 | 用途 |
 |---|---|
-| [video-breakdown](video-breakdown/) | 从视频链接或本地素材整理账号信息、时间码文案、成片脚本与八角度图表报告 |
+| [video-breakdown](video-breakdown/) | 完整拆解对标视频，再结合本人内容生成原创口播、含画面草稿的拍摄脚本并核对成稿 |
 
 ## 使用
 

@@ -1,4 +1,4 @@
 interface:
-  display_name: "视频拆解与图文报告"
-  short_description: "提取视频文案并还原脚本 生成八角度图表分析与情绪折线图 整理结构化图文报告"
-  default_prompt: "使用 $video-breakdown 拆解这条视频，整理基础信息、带时间码的文案与成片脚本，为八个角度配图表，并用全片情绪折线图和清晰结构生成图文报告。"
+  display_name: "视频拆解与原创脚本"
+  short_description: "完整拆解对标视频并保留文案图表 结合本人内容生成口播 拍摄脚本和画面草稿 核对成稿"
+  default_prompt: "使用 $video-breakdown 完整拆解这条对标视频并输出含全文、成片脚本、八角度图表和情绪折线的文档，再根据我想做的内容写原创文案和含画面草稿的拍摄脚本，最后核对成稿。"

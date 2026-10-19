@@ -79,3 +79,13 @@ missing_items 每项包括 field_or_stage、reason、impact 和 next_input。原
 报告开头展示实际完成状态、素材来源、采集日期和主要结论。报告末尾列明资料未覆盖的范围以及是否需要用户补充。把缺失影响集中说明，不在每段机械重复。
 
 完整文案、段落还原、精确分镜和爆款原因验证是不同完成目标，逐项表述。最终只链接实际产物，不把拟生成的文件列为下载项。
+
+## 面向原创的视频接续记录
+
+保留上述原视频记录与全部证据。报告的学习应用新增段落骨架、口播风格规则、声画对应表、方法与本人素材对应表，细则见 [creative-breakdown.md](creative-breakdown.md)。本人素材尚未提供时填需求，不把预想素材写成已获得。
+
+完整流程另存 `creation.json`，由助手维护，不改变现有执行器schema和review维度。建议记录 `reference_record_path`、`brief`、`style_source`、`method_mapping`、`stages`、`adopted_script`、`storyboard_manifest`、`review`、`missing_items`、`outputs`。原视频的metadata、转写、时间码和visual_segments不混入本人拟稿。
+
+原创阶段状态可用 `awaiting_input`、`draft`、`ready_to_record`、`partial`。`ready_to_record` 表示文案与草图已核对且无阻塞录制的未知项，不表示视频已拍摄或发布。原视频报告已完成、本人内容尚未给出时，分别报告这两项状态，不抹掉拆解进度。
+
+拍摄脚本的每个镜头有稳定编号；口播与采用稿一致，草图、素材状态和索引按编号关联。输出图像须有真实文件路径和图文脚本入口；草稿可使用示意，但不能进入原视频证据列表或被称为已观察关键帧。

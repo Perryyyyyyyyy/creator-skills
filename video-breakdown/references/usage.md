@@ -1,5 +1,7 @@
 # 本地执行说明
 
+当前技能包含“拆解文档→本人内容→原创文案与含画面草稿的脚本→核对”流程。下述既有CLI继续负责媒体、转写、抽帧和原视频报告；原创写作及核对由当前助手按 [creation-workflow.md](creation-workflow.md) 执行，不把 `run` 预处理完成称为全流程完成。
+
 运行位置为 `D:/codexfile/mySkill/video-breakdown`。便携 Python、Python 依赖、模型、临时文件和下载缓存都在 `.runtime` 内；任务素材与结果在 `runs` 内。不修改全局 PATH。复用已有的 `D:/Apps/FFmpeg/bin`。
 
 ## 已接通的功能
@@ -9,6 +11,8 @@ HTTPS 视频链接获取使用 yt-dlp；小红书公开页面能读取时补充�
 本地视频通过 FFprobe 和解码校验后，使用 FFmpeg 提取 PCM 音频，faster-whisper 在 CPU 上转写；模型在 D 盘下载一次，之后可以离线使用。默认 small 中文模型，输出是机器初稿。
 
 工具自动抽取带时间码的关键帧和联系表。随后由当前助手读取关键帧、文案并导入分析，不需要另行配置收费的语言模型 API。脚本自己不进行语义画面理解；命令行预处理结束后的 partial 是正常待分析状态。
+
+新增 `scripts/render_storyboard.py` 从助手已写好的镜头清单绘制逐镜头草图、分页总览和脚本Markdown，复用现有Pillow与本机中文字体。它不调用视频下载、转写或生成式视频，不需要重新配置API。输入格式和打包方式见 [creation-workflow.md](creation-workflow.md)。
 
 ## 执行命令
 
